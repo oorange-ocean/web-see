@@ -1,4 +1,4 @@
-import { record } from 'rrweb';
+import { record, eventWithTime } from 'rrweb';
 import pako from 'pako';
 import { Base64 } from 'js-base64';
 import { getTimestamp, generateUUID, _support } from '@websee/utils';
@@ -10,7 +10,7 @@ export function handleScreen(transportData: any, recordScreentime: number): void
   // 调用stopFn停止录像
   // let stopFn = record({
   record({
-    emit(event, isCheckout) {
+    emit(event: eventWithTime, isCheckout: boolean) {
       if (isCheckout) {
         // 此段时间内发生错误，上报录屏信息
         if (_support.hasError) {

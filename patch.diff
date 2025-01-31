@@ -1,0 +1,63 @@
+diff --git a/package.json b/package.json
+index f56d87a..6345f24 100644
+--- a/package.json
++++ b/package.json
+@@ -43,10 +43,10 @@
+     "husky": "^8.0.2",
+     "lint-staged": "^13.1.0",
+     "prettier": "^2.8.0",
+-    "rollup": "^2.78.0",
++    "rollup": "^3.0.0",
++    "@rollup/plugin-terser": "^0.4.0",
+     "rollup-plugin-dts": "^5.0.0",
+     "rollup-plugin-typescript2": "^0.34.1",
+-    "rollup-plugin-uglify": "^6.0.4",
+     "ts-loader": "^9.4.2",
+     "typescript": "^4.9.4"
+   },
+diff --git a/rollup.config.js b/rollup.config.js
+index 367c8d0..c63eab8 100644
+--- a/rollup.config.js
++++ b/rollup.config.js
+@@ -3,7 +3,7 @@ import typescript from 'rollup-plugin-typescript2';
+ import resolve from '@rollup/plugin-node-resolve';
+ import commonjs from '@rollup/plugin-commonjs';
+ import json from '@rollup/plugin-json';
+-import { uglify } from 'rollup-plugin-uglify';
++import terser from '@rollup/plugin-terser';
+ import dts from 'rollup-plugin-dts';
+ import fs from 'fs';
+ import path from 'path';
+@@ -35,7 +35,7 @@ function output(path) {
+           format: 'umd',
+           name: 'web-see',
+           sourcemap: true,
+-          plugins: [uglify()],
++          plugins: [terser()],
+         },
+       ],
+       plugins: [
+@@ -50,19 +50,13 @@ function output(path) {
+         resolve(),
+         commonjs(),
+         json(),
++        terser(),
+       ],
+     },
+     {
+-      input: `./packages/${path}/src/index.ts`,
+-      output: [
+-        { file: `./packages/${path}/dist/index.cjs.d.ts`, format: 'cjs' },
+-        { file: `./packages/${path}/dist/index.esm.d.ts`, format: 'esm' },
+-        { file: `./packages/${path}/dist/index.d.ts`, format: 'umd' },
+-        { file: `./packages/${path}/dist/index.min.d.ts`, format: 'umd' },
+-      ],
+-      plugins: [dts()],
++      input: `./packages/${path}/src/index.d.ts`,
+     },
+   ];
+ }
+ 
+-export default [...packageFiles.map(path => output(path)).flat()];
++export default output;
+\ No newline at end of file
